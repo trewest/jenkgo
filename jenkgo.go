@@ -67,6 +67,7 @@ func (j *JenkinsServer) GetJob(job string) {
 			fmt.Println(tmpurl)
 			if tmpurl != "" {
 				j.Url, err = url.Parse(tmpurl)
+				j.BaseJobPath = tmpurl
 				if err != nil {
 					log.Fatal(err)
 
