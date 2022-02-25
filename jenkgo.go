@@ -2,6 +2,7 @@ package jenkgo
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -63,6 +64,7 @@ func (j *JenkinsServer) GetJob(job string) {
 		nestedJobPath := strings.Split(job, "/")
 		for subdir := range nestedJobPath {
 			tmpurl := matchJob(jobList, nestedJobPath[subdir])
+			fmt.Println(tmpurl)
 			if tmpurl != "" {
 				j.Url, err = url.Parse(tmpurl)
 				if err != nil {
