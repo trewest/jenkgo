@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-var apiPath string = "/api/json"
 var buildExtension string = "/buildWithParameters"
 
 type JenkinsServer struct {
@@ -165,7 +164,7 @@ func NewJenkinsServer(server string, apiext string, user string, token string) *
 		log.Fatal(err)
 	}
 
-	j.ApiExtension = apiPath
+	j.ApiExtension = apiext
 
 	if !j.validateUrl() {
 		log.Fatal("got invalid jenkins url:", j.Url.String())
