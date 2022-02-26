@@ -224,6 +224,7 @@ func matchJob(jobs []interface{}, match string) string {
 
 func (j *JenkinsServer) OverwriteParams(userParams map[interface{}]interface{}) {
 
+	j.GetDefaultParameters()
 	for param, value := range userParams {
 		if j.QueryParams[strings.ToUpper(param.(string))] != nil {
 			j.QueryParams[strings.ToUpper(param.(string))] = value
