@@ -1,4 +1,4 @@
-package jenkgo
+package main
 
 import (
 	"encoding/json"
@@ -39,9 +39,16 @@ func (j *JenkinsServer) callablePath() string {
 
 func (j JenkinsServer) callApiEndpoint() {
 
-	resp, err := http.Get(j.callablePath())
-	if err != nil {
-		log.Fatal(err)
+	client := http.Client{}
+	req, err := http.NewRequest("GET", j.callablePath(), nil)
+	req.SetBasicAuth(j.User, j.Token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := client.Do(req)
+
+	if resp.StatusCode < 200 {
+		log.Fatal()
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -56,6 +63,11 @@ func (j JenkinsServer) callApiEndpoint() {
 func (j *JenkinsServer) GetJob(job string) {
 
 	j.callApiEndpoint()
+
+	if len(j.Results) == 0 {
+		log.Fatal("Didn't find any jobs")
+	}
+
 	jobList := j.Results["jobs"].([]interface{})
 	var err error
 
