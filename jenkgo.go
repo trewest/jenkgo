@@ -41,14 +41,20 @@ func (j JenkinsServer) callApiEndpoint() {
 
 	client := http.Client{}
 	req, err := http.NewRequest("GET", j.callablePath(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	req.SetBasicAuth(j.User, j.Token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Accept", "application/json")
 
 	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	if resp.StatusCode < 200 {
-		log.Fatal()
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		log.Fatal("Got error code from server: ", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -66,6 +72,16 @@ func (j *JenkinsServer) GetJob(job string) {
 
 	if len(j.Results) == 0 {
 		log.Fatal("Didn't find any jobs")
+	}
+
+	if val, ok := j.Results["status"].(string); ok {
+		code, err := strconv.ParseInt(val, 0, 64)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if code < 200 || code > 299 {
+			log.Fatal("Got error code from server: ", code)
+		}
 	}
 
 	jobList := j.Results["jobs"].([]interface{})
